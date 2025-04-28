@@ -1,0 +1,10 @@
+exam_dates: "13;14" # enter the exam dates using the “;” symbol. Keep in mind that some dates are weekends
+addresses: "м. Київ, вул. Павла Усенка 8; м. Чернігів" # enter the exam addresses using the “;” symbol
+ntfy_topic: "driving-exam-slots-searcher-147852369" # topic name for notifications. Should be unique
+exam_type: 1 # 0 - for theoretical exams, 1 - for practical exams
+
+log_level: "info" # "debug", "info", "warn", "error"
+browsers_count: 3 # number of browsers to open. The number can be reduced. Depends on the selected dates and addresses
+default_timeout: "5s" # default timeout for searching for elements on pages
+interval_between_checks: "2m" # interval between requests to check free exam slots
+ttl_for_found_task: "30m" # rechecking for found exam slots

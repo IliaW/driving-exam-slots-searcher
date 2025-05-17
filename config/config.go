@@ -19,6 +19,7 @@ type Config struct {
 	IntervalBetweenChecks time.Duration `mapstructure:"interval_between_checks"`
 	TtlForFoundTask       time.Duration `mapstructure:"ttl_for_found_task"`
 	NtfyTopic             string        `mapstructure:"ntfy_topic"`
+	HeadlessBrowser       bool          `mapstructure:"headless_browser"`
 }
 
 func MustLoadConfig() *Config {

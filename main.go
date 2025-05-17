@@ -40,7 +40,7 @@ var (
 	nextButtonSelector          = "//p[text()='Далі']/.."
 	mapSelector                 = "//div[contains(@class, 'leaflet-container')]"
 	addressSelector             = "//main//p[contains(text(),'%s')]/../../.."
-	timeSlotsContainerSelector  = "//div[contains(@class, 'MuiGrid-container')]"
+	timeSlotsContainerSelector  = "//p[contains(text(), 'Доступний час')]"
 )
 
 var (
@@ -69,8 +69,7 @@ func main() {
 
 	utils.SendNotification(&model.Notification{
 		Topic:   cfg.NtfyTopic,
-		Title:   "Start looking for exam slots!",
-		Tags:    []string{utils.Emoji_Loudspeaker},
+		Title:   fmt.Sprintf("%v Start looking for exam slots!", utils.Emoji_Loudspeaker),
 		Message: fmt.Sprintf("DATES: %v; CITIES: %v ", cfg.ExamDates, cfg.Addresses),
 	})
 
@@ -83,6 +82,12 @@ func main() {
 	go taskTicker(ctx, taskChan, taskList)
 
 	wg.Wait()
+	utils.SendNotification(&model.Notification{
+		Topic:   cfg.NtfyTopic,
+		Title:   "Stop looking for exam slots!",
+		Message: fmt.Sprintf(utils.Emoji_Loudspeaker),
+	})
+
 	slog.Info("done")
 }
 
@@ -120,7 +125,7 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 
 	l := launcher.New().
 		Leakless(false).
-		Headless(true).
+		Headless(cfg.HeadlessBrowser).
 		Set("disable-background-timer-throttling").
 		Set("disable-backgrounding-occluded-windows")
 	defer l.Cleanup()
@@ -148,8 +153,7 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 		if isElementPresent(authorizationSelector, page, 1*time.Second) {
 			utils.SendNotification(&model.Notification{
 				Topic:   cfg.NtfyTopic,
-				Title:   "Authorization required",
-				Tags:    []string{utils.Emoji_Warning, utils.Emoji_Loudspeaker},
+				Title:   fmt.Sprintf("%v%v Authorization required", utils.Emoji_Warning, utils.Emoji_Loudspeaker),
 				Message: "Pass authorization through Dia in the opened browser window within 10 minutes.",
 			})
 			refreshToken()
@@ -227,12 +231,11 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 		}
 
 		if isElementPresent(timeSlotsContainerSelector, page, defaultTimeout) {
-			message := fmt.Sprintf("DATE: %v; CITY: %v ", task.ExamDate, task.Address)
+			message := fmt.Sprintf("%v DATE: %v; CITY: %v ", utils.Emoji_Tada, task.ExamDate, task.Address)
 			tempFilePath := takeScreenshot(page)
 			utils.SendNotification(&model.Notification{
 				Topic:    cfg.NtfyTopic,
 				Title:    message,
-				Tags:     []string{utils.Emoji_Tada},
 				Filename: tempFilePath,
 			})
 			_ = os.Remove(tempFilePath)
@@ -296,8 +299,7 @@ func refreshToken() {
 	if isElementPresent(authorizationSelector, page, 1*time.Second) {
 		utils.SendNotification(&model.Notification{
 			Topic:    cfg.NtfyTopic,
-			Title:    "Authorization required!",
-			Tags:     []string{utils.Emoji_Warning, utils.Emoji_Loudspeaker},
+			Title:    fmt.Sprintf("%v%v Authorization required!", utils.Emoji_Warning, utils.Emoji_Loudspeaker),
 			Message:  "Pass authorization in the opened browser window within 10 minutes.",
 			Priority: 4,
 		})
@@ -400,8 +402,7 @@ func fatalErr(message string, err error) {
 	slog.Error(message, slog.Any("error", err))
 	utils.SendNotification(&model.Notification{
 		Topic:   cfg.NtfyTopic,
-		Title:   "Something went wrong",
-		Tags:    []string{utils.Emoji_Warning, utils.Emoji_Facepalm},
+		Title:   fmt.Sprintf("%v%v Something went wrong", utils.Emoji_Warning, utils.Emoji_Facepalm),
 		Message: message,
 	})
 	canselFunc()

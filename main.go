@@ -73,10 +73,12 @@ func main() {
 		Message: fmt.Sprintf("DATES: %v; CITIES: %v ", cfg.ExamDates, cfg.Addresses),
 	})
 
+	// TODO: catch panic from page.MustNavigate(URL).MustWaitLoad() and recover with new browser
 	wg := &sync.WaitGroup{}
+	once := &sync.Once{}
 	for range getBrowserInstanceCount(taskList) {
 		wg.Add(1)
-		go runBrowser(taskChan, wg)
+		go runBrowser(taskChan, wg, once)
 	}
 
 	go taskTicker(ctx, taskChan, taskList)
@@ -108,19 +110,19 @@ func taskTicker(ctx context.Context, taskChan chan *model.Task, taskList []*mode
 	ticker := time.NewTicker(cfg.IntervalBetweenChecks)
 	for {
 		select {
-		case <-ticker.C:
-			for _, task := range taskList {
-				taskChan <- task
-			}
 		case <-ctx.Done():
 			close(taskChan)
 			slog.Info("close taskChan. Application shutdown...")
 			return
+		case <-ticker.C:
+			for _, task := range taskList {
+				taskChan <- task
+			}
 		}
 	}
 }
 
-func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
+func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup, once *sync.Once) {
 	defer wg.Done()
 
 	l := launcher.New().
@@ -151,12 +153,9 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 		page.MustNavigate(URL).MustWaitLoad()
 
 		if isElementPresent(authorizationSelector, page, 1*time.Second) {
-			utils.SendNotification(&model.Notification{
-				Topic:   cfg.NtfyTopic,
-				Title:   fmt.Sprintf("%v%v Authorization required", utils.Emoji_Warning, utils.Emoji_Loudspeaker),
-				Message: "Pass authorization through Dia in the opened browser window within 10 minutes.",
+			once.Do(func() {
+				refreshToken()
 			})
-			refreshToken()
 			initSecureCookies(page)
 			page.MustNavigate(URL).MustWaitLoad()
 		}
@@ -212,7 +211,8 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 		// Wait for map display to continue
 		err = findElement(mapSelector, page, 15*time.Second)
 		if err != nil {
-			slog.Error("can't find map", slog.String("error", err.Error()))
+			slog.Error("can't find map", slog.String("error", err.Error()),
+				slog.String("examDate", task.ExamDate), slog.String("address", task.Address))
 			continue
 		}
 
@@ -244,7 +244,7 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup) {
 			slog.Info("found time slot", slog.String("info", message))
 		} else {
 			// sometimes an address exists but no time slots available
-			slog.Error("can't find time slots")
+			slog.Info(fmt.Sprintf("can't find time slots for DATE: %v CITY: %v", task.ExamDate, task.Address))
 			continue
 		}
 	}
@@ -405,7 +405,7 @@ func fatalErr(message string, err error) {
 		Title:   fmt.Sprintf("%v%v Something went wrong", utils.Emoji_Warning, utils.Emoji_Facepalm),
 		Message: message,
 	})
-	canselFunc()
+	os.Exit(1)
 }
 
 func setupLogger() *slog.Logger {

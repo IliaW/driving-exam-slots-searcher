@@ -9,6 +9,7 @@ import (
 	"hsc-gov/utils"
 	"log"
 	"log/slog"
+	"math/rand"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -115,6 +116,7 @@ func taskTicker(ctx context.Context, taskChan chan *model.Task, taskList []*mode
 			slog.Info("close taskChan. Application shutdown...")
 			return
 		case <-ticker.C:
+			shuffle(taskList)
 			for _, task := range taskList {
 				taskChan <- task
 			}
@@ -209,10 +211,11 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup, once *sync.Once) 
 		}
 
 		// Wait for map display to continue
-		err = findElement(mapSelector, page, 15*time.Second)
+		err = findElement(mapSelector, page, 12*time.Second)
 		if err != nil {
-			slog.Error("can't find map", slog.String("error", err.Error()),
-				slog.String("examDate", task.ExamDate), slog.String("address", task.Address))
+			slog.Error("can't load map", slog.String("examDate", task.ExamDate),
+				slog.String("address", task.Address))
+			slog.Debug("can't find map", slog.String("error", err.Error()))
 			continue
 		}
 
@@ -235,6 +238,7 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup, once *sync.Once) 
 			tempFilePath := takeScreenshot(page)
 			utils.SendNotification(&model.Notification{
 				Topic:    cfg.NtfyTopic,
+				Priority: 4,
 				Title:    message,
 				Filename: tempFilePath,
 			})
@@ -306,11 +310,13 @@ func refreshToken() {
 		err := findElement(signUpInTheQueueSelector, page, 10*time.Minute)
 		if err != nil {
 			fatalErr("Authorization failed", err)
+			return
 		}
 
 		newToken, err := findCookieValue(page, secureTokenCookieName)
 		if err != nil {
 			fatalErr("ERR: can't find token", err)
+			return
 		}
 		slog.Info("new token found")
 
@@ -406,6 +412,13 @@ func fatalErr(message string, err error) {
 		Message: message,
 	})
 	os.Exit(1)
+}
+
+func shuffle(slice []*model.Task) {
+	for i := len(slice) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		slice[i], slice[j] = slice[j], slice[i]
+	}
 }
 
 func setupLogger() *slog.Logger {

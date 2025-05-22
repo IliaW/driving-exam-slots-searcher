@@ -33,6 +33,7 @@ information about the date and location of the exam, you need to manually book t
 **IMPORTANT** to be able to take the practical exam, you must have successfully completed the theoretical exam
 beforehand. Check manually if you have access to the practical exam by simply clicking on the `Практичний іспит` button
 on the site https://eqn.hsc.gov.ua/cabinet/queue.
+
 **MORE IMPORTANT** the exam must be booked manually. The app only sends notifications of availability. It does not bypass captcha and does not book slots
 
 ## Limitations

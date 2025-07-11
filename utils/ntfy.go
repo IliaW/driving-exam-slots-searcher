@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	Emoji_Tada        = "🎉"
-	Emoji_Loudspeaker = "🔊"
-	Emoji_Warning     = "⚠️"
-	Emoji_Facepalm    = "🤦"
+	EmojiTada        = "🎉"
+	EmojiLoudspeaker = "🔊"
+	EmojiWarning     = "⚠️"
+	EmojiFacepalm    = "🤦"
 )
 
 func SendNotification(ntf *model.Notification) {
@@ -58,7 +58,7 @@ func SendNotification(ntf *model.Notification) {
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		slog.Error("NTFY response status code", slog.String("status", resp.Status),
+		slog.Error("NTFY error response", slog.String("status", resp.Status),
 			slog.String("body", string(bodyBytes)))
 		return
 	}

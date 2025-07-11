@@ -70,7 +70,7 @@ func main() {
 
 	utils.SendNotification(&model.Notification{
 		Topic:   cfg.NtfyTopic,
-		Title:   fmt.Sprintf("%v Start looking for exam slots!", utils.Emoji_Loudspeaker),
+		Title:   fmt.Sprintf("%v Start looking for exam slots!", utils.EmojiLoudspeaker),
 		Message: fmt.Sprintf("DATES: %v; CITIES: %v ", cfg.ExamDates, cfg.Addresses),
 	})
 
@@ -88,7 +88,7 @@ func main() {
 	utils.SendNotification(&model.Notification{
 		Topic:   cfg.NtfyTopic,
 		Title:   "Stop looking for exam slots!",
-		Message: fmt.Sprintf(utils.Emoji_Loudspeaker),
+		Message: fmt.Sprintf(utils.EmojiLoudspeaker),
 	})
 
 	slog.Info("done")
@@ -234,7 +234,7 @@ func runBrowser(taskChan chan *model.Task, wg *sync.WaitGroup, once *sync.Once) 
 		}
 
 		if isElementPresent(timeSlotsContainerSelector, page, defaultTimeout) {
-			message := fmt.Sprintf("%v DATE: %v; CITY: %v ", utils.Emoji_Tada, task.ExamDate, task.Address)
+			message := fmt.Sprintf("%v DATE: %v; CITY: %v ", utils.EmojiTada, task.ExamDate, task.Address)
 			tempFilePath := takeScreenshot(page)
 			utils.SendNotification(&model.Notification{
 				Topic:    cfg.NtfyTopic,
@@ -303,7 +303,7 @@ func refreshToken() {
 	if isElementPresent(authorizationSelector, page, 1*time.Second) {
 		utils.SendNotification(&model.Notification{
 			Topic:    cfg.NtfyTopic,
-			Title:    fmt.Sprintf("%v%v Authorization required!", utils.Emoji_Warning, utils.Emoji_Loudspeaker),
+			Title:    fmt.Sprintf("%v%v Authorization required!", utils.EmojiWarning, utils.EmojiLoudspeaker),
 			Message:  "Pass authorization in the opened browser window within 10 minutes.",
 			Priority: 4,
 		})
@@ -408,7 +408,7 @@ func fatalErr(message string, err error) {
 	slog.Error(message, slog.Any("error", err))
 	utils.SendNotification(&model.Notification{
 		Topic:   cfg.NtfyTopic,
-		Title:   fmt.Sprintf("%v%v Something went wrong", utils.Emoji_Warning, utils.Emoji_Facepalm),
+		Title:   fmt.Sprintf("%v%v Something went wrong", utils.EmojiWarning, utils.EmojiFacepalm),
 		Message: message,
 	})
 	os.Exit(1)

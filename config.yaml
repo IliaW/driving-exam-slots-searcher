@@ -1,11 +1,13 @@
-exam_dates: "4;5;6;7" # enter the exam dates using the “;” symbol. Keep in mind that some dates are weekends
+# Search settings
+exam_dates: "4;5;6;7" # enter the exam dates using the “;” symbol. Avoid weekends.
 addresses: "м. Бровари; м. Чернігів; м. Переяслав" # enter the exam addresses using the “;” symbol
-ntfy_topic: "driving-exam-slots-123456" # topic name for notifications. Should be unique
-exam_type: 1 # 0 - for theoretical exams, 1 - for practical exams
+ntfy_topic: "my-exam-slots-123456" # topic name for notifications. Update it to your ntfy topic name
+exam_type: 1 # 0 - for theoretical exams, 1 - for practical exams (will be available after passing the theoretical exam)
 
+# App settings
 log_level: "info" # "debug", "info", "warn", "error"
-browsers_count: 3 # number of browsers to open. The number can be reduced. Depends on the selected dates and addresses
+browsers_count: 3 # number of browsers to open (the number can be reduced by the app)
 default_timeout: "5s" # default timeout for searching for elements on pages
 interval_between_checks: "2m" # interval between requests to check free exam slots
-ttl_for_found_task: "2h" # rechecking for found exam slots. Example: 2h, 30m, 1h30m
+ttl_for_found_task: "1h" # re-checking slots that were found in previous checks. Example: 2h, 30m, 1h30m
 headless_browser: true # if true, the browser will be opened in the background

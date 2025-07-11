@@ -3,7 +3,9 @@
 A simple application that automatically checks the availability of slots in the electronic order https://eqn.hsc.gov.ua/
 for driving exams in Ukraine
 
-<img src="resourses/mvs-login-page.png" alt="mvs-login-page" width="600"/>
+<div style="text-align: center;">
+   <img src="resourses/mvs-login-page.png" alt="mvs-login-page" style="width: 600px;"/>
+</div>
 
 ## Description
 
@@ -34,7 +36,8 @@ information about the date and location of the exam, you need to manually book t
 beforehand. Check manually if you have access to the practical exam by simply clicking on the `Практичний іспит` button
 on the site https://eqn.hsc.gov.ua/cabinet/queue.
 
-**MORE IMPORTANT** the exam must be booked manually. The app only sends notifications of availability. It does not bypass captcha and does not book slots
+**MORE IMPORTANT** the exam must be booked manually. The app only sends notifications of availability. It does not
+bypass captcha and does not book slots
 
 ## Limitations
 

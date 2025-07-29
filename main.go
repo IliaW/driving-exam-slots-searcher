@@ -46,7 +46,6 @@ var (
 
 var (
 	cfg                    *config.Config
-	canselFunc             context.CancelFunc
 	defaultTimeout         time.Duration
 	examType               int
 	secureTokenCookieName  = "__Secure-next-auth.session-token"
@@ -56,7 +55,6 @@ var (
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	canselFunc = stop
 
 	cfg = config.MustLoadConfig()
 	examType = cfg.ExamType
@@ -411,6 +409,8 @@ func fatalErr(message string, err error) {
 		Title:   fmt.Sprintf("%v%v Something went wrong", utils.EmojiWarning, utils.EmojiFacepalm),
 		Message: message,
 	})
+
+	time.Sleep(5 * time.Second)
 	os.Exit(1)
 }
 

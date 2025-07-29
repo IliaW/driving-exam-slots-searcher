@@ -7,15 +7,28 @@ for driving exams in Ukraine
    <img src="resourses/mvs-login-page.png" alt="mvs-login-page" style="width: 600px;"/>
 </div>
 
+## Motivation
+
+It was difficult to constantly monitor the availability of slots for the practical exam, so I automated the process a
+little, which ultimately helped my close person find an available slot and successfully pass the driving test.
+
 ## Description
 
 Exam slots can appear randomly at any time on any date. The Chrome browser and the go-rod library are used to automate
-this process. Notifications are sent to the phone in the ntfy application. After receiving a notification with
+this process. Notifications are sent to the phone in the Ntfy application. After receiving a notification with
 information about the date and location of the exam, you need to manually book the slot.
 
 ## How to use
 
-1. Compile the code for your operating system.
+1. Compile the code for your operating system. You need to interact with the browser, so it's difficult to containerize
+   this application. A Dockerfile in the project will help to create an executable file.
+
+   *For Windows and Linux*
+    - `docker build -t driving-exam-slots-searcher .` - build the image
+    - `docker create --name temp-container driving-exam-slots-searcher` - create container
+    - `docker cp temp-container:/exam-slots-searcher .` - copy the files. Change `.` to specify another place for
+      executable files
+    - `docker rm temp-container` - remove the container
 2. Set up the search configuration using the `config.yaml` file:
     - Specify the desired dates to search for slots in the `exam_dates` field. Since slots are only available 21 days
       ahead, it is sufficient to use only a number. Separate the selected dates with `;` (“13;14;15”). Note that some
@@ -37,9 +50,9 @@ beforehand. Check manually if you have access to the practical exam by simply cl
 on the site https://eqn.hsc.gov.ua/cabinet/queue.
 
 **MORE IMPORTANT** the exam must be booked manually. The app only sends notifications of availability. It does not
-bypass captcha and does not book slots
+bypass captcha and does not book slots.
 
 ## Limitations
 
 Unfortunately, the service center's website does not have a refresh token. The existing access token has a TTL of about
-2 hours. After this time you will need to be re-authorized.
+2 hours. After this time, you will be notified about re-authorized.

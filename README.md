@@ -55,4 +55,4 @@ bypass captcha and does not book slots.
 ## Limitations
 
 Unfortunately, the service center's website does not have a refresh token. The existing access token has a TTL of about
-2 hours. After this time, you will be notified about re-authorized.
+2 hours. After this time, you will be notified about reauthorization.

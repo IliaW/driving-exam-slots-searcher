@@ -35,14 +35,14 @@ information about the date and location of the exam, you need to manually book t
       dates do not have slots as they are weekends in the service.
     - Specify the desired slots in the `addresses` field. For Kyiv, use more precise addresses like
       "м. Київ, вул. Павла Усенка 8" because there are several centers. For cities with a single center, only the city
-      name can be used ("м. Бровари"). Separate the selected dates with `;`.
+      name can be used ("м. Бровари"). Separate the locations with `;`. ("м. Київ, вул. Павла Усенка 8; м. Чернігів").
 
-   **IMPORTANT:** the _contains()_ operation is used to search the text on the page, so the string should be exactly
-   as on the exam location selection page ("м. Київ, вул. Павла Усенка 8; м. Чернігів").
-3. Specify a topic for the Ntfy application in the `ntfy_topic` field. The title should be unique and complex.
-4. Download the Ntfy app on your smartphone and add the specified topic. Check the link for more
+   **IMPORTANT:** the locations should be written exactly as on the exam location selection page, without any mistakes.
+   
+4. Specify a topic for the Ntfy application in the `ntfy_topic` field. The title should be unique and complex.
+5. Download the Ntfy app on your smartphone and add the specified topic. Check the link for more
    information: https://docs.ntfy.sh/.
-5. Run the program. The program will open a browser window where you will need to authenticate. After authorization, the
+6. Run the program. The program will open a browser window where you will need to authenticate. After authorization, the
    window will be closed, and the search will be performed in headless browsers.
 
 **IMPORTANT** to be able to take the practical exam, you must have successfully completed the theoretical exam
